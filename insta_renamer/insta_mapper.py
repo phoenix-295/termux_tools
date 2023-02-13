@@ -1,6 +1,6 @@
 import os
 
-downloadsFolder = "C:\\Users\\Nikhil\\Downloads"
+downloadsFolder = "/data/data/com.termux/files/home/storage/shared/Pictures/Instander"
 
 
 def find_webp_files(path):
@@ -17,7 +17,7 @@ def rename_webp(path):
         new_file = base + ".jpeg"
         # print(f"{downloadsFolder}\{each}")
         # print(f"{downloadsFolder}\{new_file}")
-        os.rename(f"{downloadsFolder}\{each}", f"{downloadsFolder}\{new_file}")
+        os.rename(f"{downloadsFolder}/{each}", f"{downloadsFolder}/{new_file}")
         print(new_file)
 
 def main():
