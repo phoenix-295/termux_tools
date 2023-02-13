@@ -18,6 +18,7 @@ def rename_webp(path):
         # print(f"{downloadsFolder}\{each}")
         # print(f"{downloadsFolder}\{new_file}")
         os.rename(f"{downloadsFolder}\{each}", f"{downloadsFolder}\{new_file}")
+        print(new_file)
 
 def main():
     doc_files = find_webp_files(downloadsFolder)
