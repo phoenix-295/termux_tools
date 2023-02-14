@@ -1,8 +1,9 @@
 import json
 import os
 from functions import load_key, encrypt_data, decrypt_data
+import binascii
 
-db_file = "db.json"
+db_file = "new_db.json"
 
 def getTopFiles(folderName):
 		files = []
@@ -62,9 +63,8 @@ def removeFolder():
 				json.dump(data, json_file, indent=4)
 
 def encryptFolder():
-	key = load_key()
+	secret_key = load_key()
 	data = readDB()
-	print(data)
 	if len(data) == 0:
 		print("Add records in DB")
 		return
@@ -95,8 +95,9 @@ def encryptFolder():
 		files = getAllFiles(folderName=folderToHide[0])
 		for file in files:
 			folder, ext = os.path.splitext(file)
-			fileName = file.split("/")[-1]
-			encryptedFileName = encrypt_data(data=fileName, key=key)
+			fileName = file.split("\\")[-1]
+			# encryptedFileName = encrypt_data(data=fileName, key=key)
+			encryptedFileName = binascii.hexlify(encrypt_data(data=fileName, key=secret_key)).decode("utf-8")
 			os.rename(file, f"{os.path.dirname(folder)}/{encryptedFileName}")
 		data[fname] = [folderToHide[0], "F"]
 		with open(db_file, "w") as json_file:
@@ -106,7 +107,7 @@ def encryptFolder():
 		files = getTopFiles(folderName=folderToHide[0])
 		for file in files:
 			fileToHide =  f"{folderToHide[0]}/{file}"
-			encryptedFileName =  encrypt_data(data=file, key=key)
+			encryptedFileName =  binascii.hexlify(encrypt_data(data=file, key=secret_key)).decode("utf-8")
 			fileToEncrypted = f"{folderToHide[0]}/{encryptedFileName}"
 			os.rename(fileToHide, fileToEncrypted)
 		data[fname] = [folderToHide[0], "T"]
@@ -114,7 +115,7 @@ def encryptFolder():
 			json.dump(data, json_file, indent=4)
 
 def decryptFolder():
-	key = load_key()
+	secret_key = load_key()
 	data = readDB()
 	folderNumber = input("Enter number: ")
 	i = 0
@@ -141,8 +142,10 @@ def decryptFolder():
 		files = getAllFiles(folderName=folderToDecrypt[0])
 		for file in files:
 			folder, ext = os.path.splitext(file)
-			fileName = file.split("/")[-1]
-			decryptedFileName = decrypt_data(data=fileName, key=key)
+			fileName = file.split("\\")[-1]
+			# decrypt(binascii.unhexlify(str_enc), key)
+			# decryptedFileName = decrypt_data(data=fileName, key=secret_key)
+			decryptedFileName = decrypt_data(data=binascii.unhexlify(fileName), key=secret_key)
 			os.rename(file, f"{os.path.dirname(folder)}/{decryptedFileName}")
 		data[fname] = [folderToDecrypt[0], "N"]
 		with open(db_file, "w") as json_file:
@@ -162,7 +165,9 @@ def decryptFolder():
 		files = getTopFiles(folderName=folderToDecrypt[0])
 		for file in files:
 			fileToDecrypt = f"{folderToDecrypt[0]}/{file}"
-			decryptedFileName = decrypt_data(data=file, key=key)
+			# decrypt(binascii.unhexlify(str_enc), key)
+			# decryptedFileName = decrypt_data(data=file, key=secret_key)
+			decryptedFileName = decrypt_data(data=binascii.unhexlify(file), key=secret_key)
 			fileDecrypted = f"{folderToDecrypt[0]}/{decryptedFileName}"
 			os.rename(fileToDecrypt, fileDecrypted)
 		data[fname] = [folderToDecrypt[0], "N"]
